@@ -1,0 +1,81 @@
+#!/bin/bash
+echo errenv initializing...
+NEWDIR=$(mktemp -d)
+cd $NEWDIR
+cat << EOF
+DISCLAIMER: errenv does NOT use errno.h directly.
+It is a shell script that prepares:
+ - the demonstration script (1)
+ - the environment setup script (envset)
+ - an isolated temporary environment
+
+Every error shown is produced by real system tools and kernel behavior, not by calling strerror() or printing values from errno.h.
+NOTE: The usual ECHILD message ("No child processes") cannot be shown directly.
+Because of how Bash and zsh implement 'wait', they display a more descriptive message instead.
+EOF
+echo 'PATH=$PATH:$NEWDIR'>envset
+echo "cd $NEWDIR">>envset
+echo 'sudo echo'>>envset
+echo 'echo ERRENV IS READY'>>envset
+echo 'echo Run . 1 when you are ready.'>>envset
+cat > 1 << EOF
+#!/bin/bash
+long=$(head -c 500 /dev/zero | tr '\0' a)
+echo errenv: executing error for: ENOENT
+./a
+mkdir temp
+touch tempf
+echo errenv: executing error for: EISDIR
+cat temp
+echo errenv: executing error for: ENOTDIR
+touch tempf/hello
+echo errenv: executing error for: ENOTSUP
+sudo cat /dev/fd
+echo errenv: executing error for: ENAMETOOLONG
+echo > \$long
+mv tempf temp/
+echo errenv: executing error for: ENOTEMPTY
+rmdir temp
+echo errenv: executing error for: EROFS
+touch /hi
+mkdir temp1
+ln -s temp1 temp2
+rmdir temp1
+ln -s temp2 temp1
+echo errenv: executing error for: ELOOP
+cat temp1
+rm -f temp2 temp1
+touch temp1
+ln -s temp1 temp2
+echo errenv: executing error for: EEXIST
+ln -s temp1 temp2
+rm -f temp1 temp2
+echo errenv: executing error for: EBUSY
+sudo cat /dev/disk3s1s1
+echo errenv: executing error for: EACCES
+cat /dev/disk4
+echo errenv: executing error for: ENODEV
+sudo cat /dev/dtrace
+echo errenv: executing error for: ECONNREFUSED
+ssh 100.81.21.117
+echo errenv: executing error for: ESRCH
+kill -1 1234567
+echo errenv: executing error for: ECHILD
+wait 1
+echo '#include <stdio.h>' > empty.c
+echo 'int main(){printf("");return 0;}' >> empty.c
+clang empty.c -o empty
+echo errenv: executing error for: ENOEXEC
+printf '\x00\x00\x00\x00' | dd of=empty bs=1 count=4 conv=notrunc > /dev/null
+./empty
+echo "errenv: executing error for: ENOEXEC (zsh)"
+zsh -c "$PWD/empty"
+echo errenv: executing error for: EILSEQ
+sed -i "" 's/.\{5\}$//' empty
+rm -f empty empty.c
+echo errenv: cleaning up errenv files...
+cd $NEWDIR/..
+rm -rf $NEWDIR
+exit
+EOF
+bash --rcfile $NEWDIR/envset
