@@ -1,8 +1,29 @@
+if command -v sed >/dev/null 2>&1; then
+    SED=yes
+else
+    SED=no
+    echo "configure: error: sed not found" >&2
+    exit 1
+fi
+if command -v dd >/dev/null 2>&1; then
+    DD=yes
+else
+    DD=no
+    echo "configure: error: dd not found" >&2
+    exit 1
+fi
+if command -v ssh >/dev/null 2>&1; then
+    SSH=yes
+else
+    SSH=no
+    echo "configure: error: ssh not found" >&2
+    exit 1
+fi
 if command -v zsh >/dev/null 2>&1; then
     ZSH=yes
 else
     ZSH=no
-    echo "configure: error: no zsh found" >&2
+    echo "configure: error: zsh not found" >&2
     exit 1
 fi
 if command -v cc >/dev/null 2>&1; then
@@ -15,7 +36,10 @@ else
 fi
 
 echo "checking for C compiler... $CC"
+echo "checking if sed is present... $SED"
+echo "checking if dd is present... $DD"
 echo "checking if zsh is present... $ZSH"
+echo "checking if ssh is present... $SSH"
 echo "configure: generating config.status"
 cat > config.status << 'EOF'
 echo "config.status: generating errenv"
