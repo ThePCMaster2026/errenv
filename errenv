@@ -1,4 +1,6 @@
 #!/bin/bash
+# Change IP to your own IP before starting.
+# chmod +x the file before starting, don't source it.
 echo errenv initializing...
 NEWDIR=$(mktemp -d)
 cd $NEWDIR
