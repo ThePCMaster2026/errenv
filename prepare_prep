@@ -1,0 +1,3 @@
+echo preparing executable...
+cc prepare.c -o prepare
+echo done. run ./prepare errenv to start
