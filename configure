@@ -125,7 +125,7 @@ cat /dev/disk4
 echo errenv: executing error for: ENODEV
 sudo cat /dev/dtrace
 echo errenv: executing error for: ECONNREFUSED
-ssh 1.1.1.1
+ssh 1.2.3.4
 echo errenv: executing error for: ESRCH
 kill -1 1234567
 echo errenv: executing error for: ECHILD
@@ -230,20 +230,20 @@ char tempname[1024];
         char *p = line;
 
         while (1) {
-            char *match = strstr(p, "1.1.1.1");
+            char *match = strstr(p, "1.2.3.4");
 
             if (!match) {
                 fputs(p, out);
                 break;
             }
 
-            /* Write everything before "1.1.1.1" */
+            /* Write everything before "1.2.3.4" */
             fwrite(p, 1, match - p, out);
 
-            /* HERE is where 1.1.1.1 is replaced with the host IP */
+            /* HERE is where 1.2.3.4 is replaced with the host IP */
             fputs(ip, out);
 
-            p = match + strlen("1.1.1.1");
+            p = match + strlen("1.2.3.4");
         }
     }
 
