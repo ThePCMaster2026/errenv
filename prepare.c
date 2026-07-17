@@ -113,6 +113,6 @@ char tempname[1024];
 
 
 
-    printf("Added execute permissions to %s\n", argv[1]);
+    printf("Prepare success for %s\n", argv[1]);
     return 0;
 }
