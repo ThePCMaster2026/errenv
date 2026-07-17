@@ -1,31 +1,3 @@
-if command -v sed >/dev/null 2>&1; then
-    SED=yes
-else
-    SED=no
-    echo "configure: error: sed not found" >&2
-    exit 1
-fi
-if command -v dd >/dev/null 2>&1; then
-    DD=yes
-else
-    DD=no
-    echo "configure: error: dd not found" >&2
-    exit 1
-fi
-if command -v ssh >/dev/null 2>&1; then
-    SSH=yes
-else
-    SSH=no
-    echo "configure: error: ssh not found" >&2
-    exit 1
-fi
-if command -v zsh >/dev/null 2>&1; then
-    ZSH=yes
-else
-    ZSH=no
-    echo "configure: error: zsh not found" >&2
-    exit 1
-fi
 if command -v cc >/dev/null 2>&1; then
     CC=cc
 elif command -v clang >/dev/null 2>&1; then
@@ -34,11 +6,53 @@ else
     echo "configure: error: no C compiler found" >&2
     exit 1
 fi
-
 echo "checking for C compiler... $CC"
+cat > test.c << EOF
+int main(void) {
+return 0;
+}
+EOF
+if "$CC" test.c -o test >/dev/null 2>&1; then
+    CC_CAN_COMPILE=yes
+    rm -f test.c test
+else
+    CC_CAN_COMPILE=no
+    rm -f test.c test
+    echo "configure: error: C compiler cannot create executables" >&2
+    exit 1
+fi
+echo "checking whether the C compiler works... $CC_CAN_COMPILE"
+if command -v sed >/dev/null 2>&1; then
+    SED=yes
+else
+    SED=no
+    echo "configure: error: sed not found" >&2
+    exit 1
+fi
 echo "checking if sed is present... $SED"
+if command -v dd >/dev/null 2>&1; then
+    DD=yes
+else
+    DD=no
+    echo "configure: error: dd not found" >&2
+    exit 1
+fi
 echo "checking if dd is present... $DD"
+if command -v zsh >/dev/null 2>&1; then
+    ZSH=yes
+else
+    ZSH=no
+    echo "configure: error: zsh not found" >&2
+    exit 1
+fi
 echo "checking if zsh is present... $ZSH"
+if command -v ssh >/dev/null 2>&1; then
+    SSH=yes
+else
+    SSH=no
+    echo "configure: error: ssh not found" >&2
+    exit 1
+fi
 echo "checking if ssh is present... $SSH"
 echo "configure: generating config.status"
 NEWDIR=$(mktemp -d)
