@@ -50,6 +50,7 @@ echo "config.status: generating errenv"
 cat > errenv << DONE
 #!/bin/bash
 echo errenv initializing...
+mkdir $NEWDIR 2>/dev/null
 cd $NEWDIR
 cat << EWARN
 DISCLAIMER: errenv does NOT use errno.h directly.
@@ -130,9 +131,7 @@ exit
 errent
 bash --rcfile $NEWDIR/envset
 DONE
-PWD=$PWD_OLD
 unset NEWDIR
-unset PWD_OLD
 unset long
 echo "config.status: generating prepare"
 cat > prepare.c << PREPS
