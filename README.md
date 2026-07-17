@@ -1,1 +1,1 @@
-All you have to do is run . ./prepare_prep
+All you have to do is run ./configure (or . ./configure if that fails)
