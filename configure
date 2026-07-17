@@ -255,4 +255,9 @@ chmod +x config.status
 ./config.status
 "$CC" prepare.c -o prepare
 ./prepare errenv
+unset CC
+unset ZSH
+unset SSH
+unset SED
+unset DD
 echo "Configuration finished for errenv. Run ./errenv to start errenv."
