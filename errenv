@@ -66,7 +66,7 @@ echo '#include <stdio.h>' > empty.c
 echo 'int main(){printf("");return 0;}' >> empty.c
 clang empty.c -o empty
 echo errenv: executing error for: ENOEXEC
-printf '\x00\x00\x00\x00' | dd of=empty bs=1 count=4 conv=notrunc > /dev/null
+printf '\x00\x00\x00\x00' | dd of=empty bs=1 count=4 conv=notrunc 1> /dev/null 2> /dev/null
 ./empty
 echo "errenv: executing error for: ENOEXEC (zsh)"
 zsh -c "$PWD/empty"
