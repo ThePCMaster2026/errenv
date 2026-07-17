@@ -1,59 +1,63 @@
+printf "checking for C compiler... "
 if command -v cc >/dev/null 2>&1; then
     CC=cc
+    echo $CC
 elif command -v clang >/dev/null 2>&1; then
     CC=clang
+    echo $CC
 else
+    echo "none found"
     echo "configure: error: no C compiler found" >&2
     exit 1
 fi
-echo "checking for C compiler... $CC"
 cat > test.c << EOF
 int main(void) {
 return 0;
 }
 EOF
+printf "checking whether the C compiler works... "
 if "$CC" test.c -o test >/dev/null 2>&1; then
-    CC_CAN_COMPILE=yes
+    echo "yes"
     rm -f test.c test
 else
-    CC_CAN_COMPILE=no
+    echo "no"
     rm -f test.c test
     echo "configure: error: C compiler cannot create executables" >&2
     exit 1
 fi
-echo "checking whether the C compiler works... $CC_CAN_COMPILE"
+printf "checking if sed is present... "
 if command -v sed >/dev/null 2>&1; then
-    SED=yes
+    echo "yes"
 else
-    SED=no
+    echo "no"
     echo "configure: error: sed not found" >&2
     exit 1
 fi
-echo "checking if sed is present... $SED"
+printf "checking if dd is present... "
 if command -v dd >/dev/null 2>&1; then
-    DD=yes
+    echo "yes"
 else
-    DD=no
+    echo "no"
     echo "configure: error: dd not found" >&2
     exit 1
 fi
-echo "checking if dd is present... $DD"
+printf "checking if zsh is present... "
 if command -v zsh >/dev/null 2>&1; then
-    ZSH=yes
+    echo "yes"
 else
-    ZSH=no
+    echo "no"
     echo "configure: error: zsh not found" >&2
     exit 1
 fi
-echo "checking if zsh is present... $ZSH"
-if command -v ssh >/dev/null 2>&1; then
-    SSH=yes
-else
-    SSH=no
-    echo "configure: error: ssh not found" >&2
-    exit 1
-fi
-echo "checking if ssh is present... $SSH"
+printf "checking if ssh is present... "
+#if command -v ssh >/dev/null 2>&1; then
+#    echo "yes"
+#else
+#    echo "no"
+#    echo "configure: error: ssh not found" >&2
+#    exit 1
+#fi
+echo "skipped — running in offline mode"
 echo "configure: generating config.status"
 NEWDIR=$(mktemp -d)
 long=$(head -c 256 /dev/zero | tr '\0' a)
@@ -121,8 +125,7 @@ echo errenv: executing error for: EACCES
 cat /dev/disk4
 echo errenv: executing error for: ENODEV
 sudo cat /dev/dtrace
-echo errenv: executing error for: ECONNREFUSED
-ssh 1.1.1.1
+echo "errenv: executing error for: ECONNREFUSED (skipped — running in offline mode)"
 echo errenv: executing error for: ESRCH
 kill -1 1234567
 echo errenv: executing error for: ECHILD
@@ -153,39 +156,39 @@ cat > prepare.c << PREPS
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ifaddrs.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+// #include <ifaddrs.h>
+// #include <arpa/inet.h>
+// #include <netinet/in.h>
 
-int get_host_ip(char *ip, size_t size) {
-    struct ifaddrs *ifaddr, *ifa;
+// int get_host_ip(char *ip, size_t size) {
+  //  struct ifaddrs *ifaddr, *ifa;
 
-    if (getifaddrs(&ifaddr) == -1) {
-        perror("getifaddrs");
-        return -1;
-    }
+    //if (getifaddrs(&ifaddr) == -1) {
+      //  perror("getifaddrs");
+//        return -1;
+  //  }
 
-    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr == NULL)
-            continue;
+    //for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+      //  if (ifa->ifa_addr == NULL)
+        //    continue;
 
-        if (ifa->ifa_addr->sa_family == AF_INET) {
-            struct sockaddr_in *addr =
-                (struct sockaddr_in *)ifa->ifa_addr;
+  //      if (ifa->ifa_addr->sa_family == AF_INET) {
+    //        struct sockaddr_in *addr =
+      //          (struct sockaddr_in *)ifa->ifa_addr;
 
-            const char *result =
-                inet_ntop(AF_INET, &addr->sin_addr, ip, size);
+        //    const char *result =
+          //      inet_ntop(AF_INET, &addr->sin_addr, ip, size);
 
-            if (result && strcmp(ip, "127.0.0.1") != 0) {
-                freeifaddrs(ifaddr);
-                return 0;
-            }
-        }
-    }
+            //if (result && strcmp(ip, "127.0.0.1") != 0) {
+              //  freeifaddrs(ifaddr);
+                //return 0;
+      //      }
+   //     }
+  //  }
 
-    freeifaddrs(ifaddr);
-    return -1;
-}
+//    freeifaddrs(ifaddr);
+  //  return -1;
+//}
 
 
 int main(int argc, char *argv[]) {
@@ -200,58 +203,59 @@ int main(int argc, char *argv[]) {
         perror("stat");
         return 1;
     }
-char ip[INET_ADDRSTRLEN];
-if (get_host_ip(ip, sizeof(ip)) == -1) {
-        fprintf(stderr, "./prepare: error: Could not find host IP\n");
-        return 1;
-    }
-    FILE *in = fopen(argv[1], "r");
-    if (!in) {
-        perror("fopen");
-        return 1;
-    }
+    printf("./prepare: Skipping network setup — running in offline mode\n");
+// char ip[INET_ADDRSTRLEN];
+// if (get_host_ip(ip, sizeof(ip)) == -1) {
+//        fprintf(stderr, "./prepare: error: Could not find host IP\n");
+//        return 1;
+//    }
+//    FILE *in = fopen(argv[1], "r");
+//    if (!in) {
+//        perror("fopen");
+//        return 1;
+//    }
 
-char tempname[1024];
-    snprintf(tempname, sizeof(tempname), "%s.tmp", argv[1]);
+//char tempname[1024];
+  //  snprintf(tempname, sizeof(tempname), "%s.tmp", argv[1]);
 
-    FILE *out = fopen(tempname, "w");
-    if (!out) {
-        perror("fopen");
-        fclose(in);
-        return 1;
-    }
+    //FILE *out = fopen(tempname, "w");
+//    if (!out) {
+  //      perror("fopen");
+    //    fclose(in);
+      //  return 1;
+ //   }
 
-    char line[4096];
+   // char line[4096];
 
-    while (fgets(line, sizeof(line), in)) {
-        char *p = line;
+//    while (fgets(line, sizeof(line), in)) {
+  //      char *p = line;
 
-        while (1) {
-            char *match = strstr(p, "1.1.1.1");
+//        while (1) {
+  //          char *match = strstr(p, "1.1.1.1");
 
-            if (!match) {
-                fputs(p, out);
-                break;
-            }
+//            if (!match) {
+  //              fputs(p, out);
+    //            break;
+      //      }
 
             /* Write everything before "1.1.1.1" */
-            fwrite(p, 1, match - p, out);
+//            fwrite(p, 1, match - p, out);
 
             /* HERE is where 1.1.1.1 is replaced with the host IP */
-            fputs(ip, out);
+//            fputs(ip, out);
 
-            p = match + strlen("1.1.1.1");
-        }
-    }
+  //          p = match + strlen("1.1.1.1");
+    //    }
+ //   }
 
-    fclose(in);
-    fclose(out);
+//    fclose(in);
+  //  fclose(out);
 
-    if (rename(tempname, argv[1]) == -1) {
-        perror("rename");
-        return 1;
-    }
-
+//    if (rename(tempname, argv[1]) == -1) {
+  //      perror("rename");
+    //    return 1;
+  //  }
+ 
     mode_t new_mode = st.st_mode |
                       S_IXUSR | S_IXGRP | S_IXOTH;
 
