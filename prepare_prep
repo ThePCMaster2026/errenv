@@ -1,5 +1,5 @@
 echo generating errenv...
-cat > errenv << EOF
+cat > errenv << 'EOF'
 #!/bin/bash
 echo errenv initializing...
 NEWDIR=$(mktemp -d)
@@ -15,8 +15,8 @@ Every error shown is produced by real system tools and kernel behavior, not by c
 NOTE: The usual ECHILD message ("No child processes") cannot be shown directly.
 Because of how Bash and zsh implement 'wait', they display a more descriptive message instead.
 EWARN
-echo 'PATH=$PATH:$NEWDIR'>envset
-echo 'BASH_SILENCE_DEPRECATION_WARNING=1'>>envset
+echo 'export PATH=$PATH:$NEWDIR'>envset
+echo 'export BASH_SILENCE_DEPRECATION_WARNING=1'>>envset
 echo "cd $NEWDIR">>envset
 echo 'sudo echo'>>envset
 echo 'echo ERRENV IS READY'>>envset
