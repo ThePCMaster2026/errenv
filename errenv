@@ -1,6 +1,4 @@
 #!/bin/bash
-# Change IP to your own IP before starting.
-# chmod +x the file before starting, don't source it.
 echo errenv initializing...
 NEWDIR=$(mktemp -d)
 cd $NEWDIR
@@ -59,7 +57,7 @@ cat /dev/disk4
 echo errenv: executing error for: ENODEV
 sudo cat /dev/dtrace
 echo errenv: executing error for: ECONNREFUSED
-ssh 1.1.1.1
+ssh 100.81.21.117
 echo errenv: executing error for: ESRCH
 kill -1 1234567
 echo errenv: executing error for: ECHILD
