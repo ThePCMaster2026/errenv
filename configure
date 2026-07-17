@@ -1,3 +1,10 @@
+if command -v zsh >/dev/null 2>&1; then
+    ZSH=yes
+else
+    ZSH=no
+    echo "configure: error: no zsh found" >&2
+    exit 1
+fi
 if command -v cc >/dev/null 2>&1; then
     CC=cc
 elif command -v clang >/dev/null 2>&1; then
@@ -8,8 +15,11 @@ else
 fi
 
 echo "checking for C compiler... $CC"
-echo "configure: generating errenv"
-cat > errenv << 'EOF'
+echo "checking if zsh is present... $ZSH"
+echo "configure: generating config.status"
+cat > config.status << 'EOF'
+echo "config.status: generating errenv"
+cat > errenv << 'DONE'
 #!/bin/bash
 echo errenv initializing...
 NEWDIR=$(mktemp -d)
@@ -92,8 +102,9 @@ rm -rf $NEWDIR
 exit
 errent
 bash --rcfile $NEWDIR/envset
-EOF
-cat > prepare.c << EOF
+DONE
+echo "config.status: generating prepare"
+cat > prepare.c << PREPS
 #include <stdio.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -206,10 +217,12 @@ char tempname[1024];
     }
 
     printf("./prepare: Preparation success for %s\n", argv[1]);
-    printf("./prepare: You can now run ./%s\n", argv[1]);
     return 0;
 }
+PREPS
 EOF
-echo "configure: generating prepare"
+chmod +x config.status
+./config.status
 "$CC" prepare.c -o prepare
 ./prepare errenv
+echo "Configuration finished for errenv. Run ./errenv to start errenv."
