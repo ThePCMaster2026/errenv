@@ -1,4 +1,4 @@
-echo preparing errenv...
+echo generating errenv...
 cat > errenv << EOF
 #!/bin/bash
 echo errenv initializing...
@@ -16,6 +16,7 @@ NOTE: The usual ECHILD message ("No child processes") cannot be shown directly.
 Because of how Bash and zsh implement 'wait', they display a more descriptive message instead.
 EWARN
 echo 'PATH=$PATH:$NEWDIR'>envset
+echo 'BASH_SILENCE_DEPRECATION_WARNING=1'>>envset
 echo "cd $NEWDIR">>envset
 echo 'sudo echo'>>envset
 echo 'echo ERRENV IS READY'>>envset
@@ -82,8 +83,8 @@ exit
 errent
 bash --rcfile $NEWDIR/envset
 EOF
-echo successfully prepared errenv
-echo preparing prepare script...
+echo successfully generated errenv
+echo generating prepare script...
 cat > prepare.c << EOF
 #include <stdio.h>
 #include <sys/stat.h>
@@ -197,9 +198,11 @@ char tempname[1024];
     }
 
     printf("Prepare success for %s\n", argv[1]);
+    printf("You can now run ./%s\n", argv[1]);
     return 0;
 }
-echo success
+EOF
+echo successfully generated prepare script
 echo compiling prepare...
 cc prepare.c -o prepare
 echo done. run ./prepare errenv to start
